@@ -1,0 +1,54 @@
+/* Fondo general */
+body {
+    background-color: #020b1c; /* Azul oscuro casi negro */
+    color: white;
+    font-family: 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 0;
+  }  
+  
+  /* Estilos generales para títulos y subtítulos */
+  h1 {
+    font-size: 2.5rem;
+    color: #ffffff; /* Blanco puro para destacar */
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    color: #ccccff; /* Azul claro */
+    margin-bottom: 15px;
+  }
+  
+  p {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #e0e0e0; /* Texto general */
+    margin-bottom: 10px;
+  }
+  
+  /*LINKS*/
+  a {
+    color: #42b983; /* Verde elegante */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+/*PARA BOTONES*/
+  button {
+    background-color: #42b983;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  button:hover {
+    background-color: #369f6b;
+  }
+  
