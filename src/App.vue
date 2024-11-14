@@ -1,16 +1,28 @@
 <template>
   <div id="app">
-    <NavBar />
-    <router-view />
-    <PageFooter />
+    <NavBar v-if="isUserLoggedIn" /> 
+    <router-view /> 
+    <PageFooter v-if="isUserLoggedIn" />
   </div>
 </template>
 
-<script setup>
+<script>
 import NavBar from './components/NavBar.vue';
 import PageFooter from './components/PageFooter.vue';
+import { mapGetters } from 'vuex';
+
+export default {
+  name: 'App',
+  components: {
+    NavBar,
+    PageFooter, // Agregar PageFooter aquí
+  },
+  computed: {
+    ...mapGetters(['isUserLoggedIn']),
+  },
+};
 </script>
 
 <style>
-@import '@/assets/styles.css';
+  @import '@/assets/styles.css';
 </style>

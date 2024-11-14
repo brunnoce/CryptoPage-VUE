@@ -1,58 +1,73 @@
 <template>
-    <div class="crypto-table">
-      <h2>Lista de Criptomonedas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Market Cap</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="crypto in cryptos" :key="crypto.id">
-            <td>{{ crypto.name }}</td>
-            <td>{{ formatPrice(crypto.price) }}</td>
-            <td>{{ formatMarketCap(crypto.marketCap) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </template>
-  
-  <script>
-  import apiClient from '@/axiosConfig';
-  
-  export default {
-    name: 'CryptoTable',
-    data() {
-      return {
-        cryptos: [] 
-      };
+  <div class="crypto-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Criptomoneda</th>
+          <th>Precio de Compra (ARS)</th>
+          <th>Precio de Venta (ARS)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(crypto, key) in cryptos" :key="key">
+          <td>{{ crypto.name }}</td>
+          <td v-if="typeof crypto.ask === 'number'">{{ numeroConSeparadorDecimales(crypto.ask) }}</td>
+          <td v-if="typeof crypto.bid === 'number'">{{ numeroConSeparadorDecimales(crypto.bid) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if="cargando" class="loading">Cargando...</div>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      cryptos: {
+        btc: { name: 'Bitcoin', ask: 0, bid: 0, time: '' },
+        eth: { name: 'Ethereum', ask: 0, bid: 0, time: '' },
+        dai: { name: 'DAI', ask: 0, bid: 0, time: '' },
+        usdt: { name: 'USDT', ask: 0, bid: 0, time: '' },
+        doge: { name: 'Dogecoin', ask: 0, bid: 0, time: ''},
+        ada: { name: 'Cardano', ask: 0, bid: 0, time: '' },
+        sol: { name: 'Solana', ask: 0, bid: 0, time: ''},
+        dot: { name: 'Polkadot', ask: 0, bid: 0, time: ''},
+        ltc: { name: 'Litecoin', ask: 0, bid: 0, time: ''},
+      },
+      cargando: false,
+    };
+  },
+  methods: {
+    numeroConSeparadorDecimales(numero) {
+      return new Intl.NumberFormat('es-AR').format(numero);
     },
-    methods: {
-      async fetchCryptos() {
-        try {
-          const response = await apiClient.get('/cryptos'); 
-          this.cryptos = response.data;
-        } catch (error) {
-          console.error('Error al cargar las criptomonedas:', error);
+
+    async obtenerPrecios() {
+      try {
+        this.cargando = true;
+        for (let crypto in this.cryptos) {
+          const response = await axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
+          this.cryptos[crypto].ask = response.data.totalAsk;
+          this.cryptos[crypto].bid = response.data.totalBid;
+          this.cryptos[crypto].time = response.data.time;  
         }
-      },
-      formatPrice(value) {
-        return `$${value.toFixed(2)}`;
-      },
-      formatMarketCap(value) {
-        return `$${(value / 1e9).toFixed(2)}B`; 
+      } catch (error) {
+        console.error('Error al obtener precios:', error);
+      } finally {
+        this.cargando = false;
       }
     },
-    mounted() {
-      this.fetchCryptos();
-    }
-  };
-  </script>
-  
-  <style scoped>
+  },
+  created() {
+    this.obtenerPrecios();
+  },
+};
+</script>
+
+<style scoped>
   .crypto-table {
     margin: 20px auto;
     padding: 20px;
@@ -88,4 +103,4 @@
     background-color: #5CF2F2;
   }
   
-  </style>  
+</style>  

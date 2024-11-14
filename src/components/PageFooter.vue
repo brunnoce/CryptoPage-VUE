@@ -4,9 +4,9 @@
     <div class="footer-content">
       <h4>Datos de contacto</h4>
       <div class="contact-info">
-        <p><strong>Dirección:</strong> Calle Ficticia 123, Ciudad, País</p>
-        <p><strong>Teléfono:</strong> +123 456 789</p>
-        <p><strong>Email:</strong> contacto@cripto.com</p>
+        <p><strong>Dirección:</strong> Exchange Street 4324, Los Angeles, USA</p>
+        <p><strong>Teléfono:</strong> +54-3564417646</p>
+        <p><strong>Email:</strong> cryptopage@cripto.com</p>
       </div>
     </div>
   </footer>

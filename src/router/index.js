@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
-import ComprarView from '../views/ComprarView.vue';  // Componente para Comprar
-import VenderView from '../views/VenderView.vue';  // Componente para Vender
-import HistorialView from '../views/HistorialView.vue'; // Componente para Historial
+import ComprarView from '../views/ComprarView.vue';  
+import VenderView from '../views/VenderView.vue';  
+import HistorialView from '../views/HistorialView.vue'; 
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView,
+    name: 'login',
+    component: LoginView, // Aquí ahora la vista de Login es la raíz
   },
   {
-    path: '/login',
-    name: 'login',
-    component: LoginView,
+    path: '/home',
+    name: 'home',
+    component: HomeView,
   },
   {
     path: '/comprar',
