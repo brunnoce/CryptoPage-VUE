@@ -26,12 +26,12 @@ export default {
 </script>
 
 <style scoped>
-.logo-container {
-  margin-top: 20px;
-  text-align: center;
-}
+  .logo-container {
+    margin-top: 20px;
+    text-align: center;
+  }
 
-.logo {
-  width: 139px; 
-}
+  .logo {
+    width: 139px; 
+  }
 </style>

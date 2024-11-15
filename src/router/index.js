@@ -9,7 +9,7 @@ const routes = [
   {
     path: '/',
     name: 'login',
-    component: LoginView, // Aquí ahora la vista de Login es la raíz
+    component: LoginView, 
   },
   {
     path: '/home',

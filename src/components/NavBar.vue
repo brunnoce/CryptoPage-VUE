@@ -18,80 +18,80 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
-export default {
-  name: 'NavBar',
-  computed: {
-    ...mapGetters(['isUserLoggedIn']),
-  },
-  methods: {
-    ...mapActions(['logoutUser']),
-    
-    logout() {
-      localStorage.removeItem('userId');
-      this.logoutUser(); 
-      this.$router.push({ name: 'login' }); 
+  export default {
+    name: 'NavBar',
+    computed: {
+      ...mapGetters(['isUserLoggedIn']),
     },
-  },
-};
+    methods: {
+      ...mapActions(['logoutUser']),
+      
+      logout() {
+        localStorage.removeItem('userId');
+        this.logoutUser(); 
+        this.$router.push({ name: 'login' }); 
+      },
+    },
+  };
 </script>
 
 <style scoped>
-.navbar-line {
-  width: 100%;
-  border-top: 2px solid #034AA6; 
-  margin-bottom: 20px;
-}
+  .navbar-line {
+    width: 100%;
+    border-top: 2px solid #034AA6; 
+    margin-bottom: 20px;
+  }
 
-nav {
-  background-color: rgba(3, 74, 166, 0.1);
-  padding: 15px 30px; 
-}
+  nav {
+    background-color: rgba(3, 74, 166, 0.1);
+    padding: 15px 30px; 
+  }
 
-nav ul {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; 
-  gap: 20px;
-  margin: 0;
-  padding: 0;
-}
+  nav ul {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+  }
 
-nav li {
-  list-style: none;
-}
+  nav li {
+    list-style: none;
+  }
 
-.logo {
-  margin-right: 10px;
-}
+  .logo {
+    margin-right: 10px;
+  }
 
-.logo-small {
-  width: 50px;
-  height: auto;
-}
+  .logo-small {
+    width: 50px;
+    height: auto;
+  }
 
-nav a {
-  text-decoration: none;
-  color: #034AA6;
-  font-weight: bold;
-  font-size: 18px;
-  transition: color 0.3s ease-in-out;
-}
+  nav a {
+    text-decoration: none;
+    color: #034AA6;
+    font-weight: bold;
+    font-size: 18px;
+    transition: color 0.3s ease-in-out;
+  }
 
-nav a:hover {
-  color: #5CF2F2;
-}
+  nav a:hover {
+    color: #5CF2F2;
+  }
 
-nav a.router-link-exact-active {
-  color: #5CF2F2;
-}
+  nav a.router-link-exact-active {
+    color: #5CF2F2;
+  }
 
-.title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #034AA6;
-  letter-spacing: 2px;
-  margin-right: auto; 
-}
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #034AA6;
+    letter-spacing: 2px;
+    margin-right: auto; 
+  }
 </style>

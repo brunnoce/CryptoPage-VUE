@@ -92,19 +92,4 @@ export default {
   font-size: 1rem;
   font-weight: 400;
 }
-
-.login-form button {
-  background-color: #5CF2F2;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.login-form button:hover {
-  background-color: #034AA6;
-}
 </style>
