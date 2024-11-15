@@ -1,16 +1,13 @@
 <template>
   <div class="home">
-    <!-- CRYPTOS -->
     <section class="crypto-table">
       <CryptoTable />
     </section>
 
-    <!-- LOGO PRINCIPAL -->
     <section class="logo-section">
-      <img alt="Crypto Logo" src="../assets/images/logo.png" class="logo-large">
+      <img alt="Crypto Logo" src="@/assets/images/logo.png" class="logo-large">
     </section>
 
-    <!-- PRESENTACION -->
     <section class="presentation">
       <h2>Bienvenido a CryptoPage</h2>
       <p>

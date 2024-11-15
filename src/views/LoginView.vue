@@ -30,7 +30,6 @@ export default {
     
     inicioSesion() {
       if (this.username.trim()) {
-        // Simula la autenticación y almacena el ID
         localStorage.setItem('userId', this.username);
         this.loginUser(this.username);
         this.$router.push({ name: 'home' });
