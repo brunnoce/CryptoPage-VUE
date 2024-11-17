@@ -44,7 +44,7 @@ export default {
         btc: "Bitcoin",
         eth: "Ethereum",
         dai: "DAI",
-        usdt: "Tether",
+        usdt: "USDT",
         doge: "Dogecoin",
         ada: "Cardano",
         sol: "Solana",
@@ -55,10 +55,8 @@ export default {
   },
   methods: {
     verDetalles(movimiento) {
-      this.$router.push({
-        name: 'DetailsView',
-        params: { id: movimiento._id },
-      });
+      console.log('TRANSACCION ID:', movimiento._id); 
+      this.$router.push(`/details/${movimiento._id}`);
     },
   },
 };
@@ -66,27 +64,27 @@ export default {
 
 <style scoped>
   .historial-table-container {
-    display: flex; /* Usamos flexbox para alinear las tablas horizontalmente */
-    gap: 20px; /* Espacio entre las tablas */
-    flex-wrap: wrap; /* Permite que las tablas se acomoden si hay poco espacio */
+    display: flex; 
+    gap: 20px; 
+    flex-wrap: wrap; 
   }
 
   .historial-table {
     background-color: rgba(3, 74, 166, 0.1);
-    padding: 10px; /* Reducir el padding */
+    padding: 10px; 
     border-radius: 8px;
-    width: 48%; /* Establecer un tamaño más pequeño para cada tabla */
-    box-sizing: border-box; /* Asegura que el padding no afecte al tamaño total */
+    width: 48%; 
+    box-sizing: border-box; 
   }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem; /* Reducir el tamaño de la fuente */
+    font-size: 0.9rem; 
   }
 
   th, td {
-    padding: 8px; /* Reducir el padding en las celdas */
+    padding: 8px; 
     border: 1px solid #ddd;
     text-align: center;
   }
@@ -95,7 +93,7 @@ export default {
     background-color: #034aa6;
     color: white;
     border: none;
-    padding: 6px 12px; /* Reducir el padding del botón */
+    padding: 6px 12px; 
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.8rem;

@@ -1,12 +1,12 @@
 <template>
   <div class="saldo-resumen">
-      <h2>Saldos Totales</h2>
-      <ul>
-        <li v-for="(cantidad, crypto) in saldoTotal" :key="crypto">
-          {{ cryptoNames[crypto] || crypto.toUpperCase() }}: {{ cantidad }}
-        </li>
-      </ul>
-    </div>
+    <h2>Saldos Totales</h2>
+    <ul>
+      <li v-for="(cantidad, crypto) in saldoTotal" :key="crypto">
+        {{ cryptoNames[crypto] || crypto.toUpperCase() }}: {{ cantidad }}
+      </li>
+    </ul>
+  </div>
   <div class="historial-contenedor">
     <HistorialTable :movimientos="compras" titulo="Compras" />
     <HistorialTable :movimientos="ventas" titulo="Ventas" />
@@ -16,6 +16,7 @@
 <script>
 import HistorialTable from '@/components/HistorialTable.vue';
 import { mapState } from 'vuex';
+import apiClient from '@/axiosConfig';
 
 export default {
   components: {
@@ -46,11 +47,11 @@ export default {
   },
   async created() {
     try {
-      const response = await this.$axios.get(
+      const response = await apiClient.get(
         `transactions?q={"user_id": "${this.$store.getters.getUserId}"}`
       );
+      console.log('Transacciones cargadas:', response.data); // Para debugging
       const movimientos = response.data;
-
       this.compras = movimientos.filter(m => m.action === 'purchase');
       this.ventas = movimientos.filter(m => m.action === 'sale');
     } catch (error) {
