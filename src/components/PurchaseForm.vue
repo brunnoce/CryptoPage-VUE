@@ -41,90 +41,93 @@
 </template>
 
 <script>
-  import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
-  export default {
-    data() {
-      return {
-        cryptos: {
-          btc: { name: 'Bitcoin', ask: 0, bid: 0, time: '' },
-          eth: { name: 'Ethereum', ask: 0, bid: 0, time: '' },
-          dai: { name: 'DAI', ask: 0, bid: 0, time: '' },
-          usdt: { name: 'USDT', ask: 0, bid: 0, time: '' },
-          doge: { name: 'Dogecoin', ask: 0, bid: 0, time: ''},
-          ada: { name: 'Cardano', ask: 0, bid: 0, time: '' },
-          sol: { name: 'Solana', ask: 0, bid: 0, time: ''},
-          dot: { name: 'Polkadot', ask: 0, bid: 0, time: ''},
-          ltc: { name: 'Litecoin', ask: 0, bid: 0, time: ''},
-        },
-        compraSeleccionada: "",
-        cantidad: 0,
-        monto: 0,
-        mensajeUsuario: "",
-      };
-    },
-    computed: {
-      ...mapGetters(["getUserId"]),
-    },
-    watch: {
-      cantidad(newCantidad) {
-        if (this.compraSeleccionada && this.cryptos[this.compraSeleccionada]) {
-          this.monto = (newCantidad * this.cryptos[this.compraSeleccionada].ask).toFixed(2);
-        }
+export default {
+  data() {
+    return {
+      cryptos: {
+        btc: { name: 'Bitcoin', ask: 0, bid: 0, time: '' },
+        eth: { name: 'Ethereum', ask: 0, bid: 0, time: '' },
+        dai: { name: 'DAI', ask: 0, bid: 0, time: '' },
+        usdt: { name: 'USDT', ask: 0, bid: 0, time: '' },
+        doge: { name: 'Dogecoin', ask: 0, bid: 0, time: ''},
+        ada: { name: 'Cardano', ask: 0, bid: 0, time: '' },
+        sol: { name: 'Solana', ask: 0, bid: 0, time: ''},
+        dot: { name: 'Polkadot', ask: 0, bid: 0, time: ''},
+        ltc: { name: 'Litecoin', ask: 0, bid: 0, time: ''},
       },
-      compraSeleccionada() {
-        this.actualizarMonto();
-      },
-    },
-    methods: {
-      async actualizarMonto() {
-        if (this.compraSeleccionada) {
-          const crypto = this.compraSeleccionada;
-          const response = await this.$axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
-          this.cryptos[crypto].ask = response.data.totalAsk;
-          this.monto = (this.cantidad * this.cryptos[crypto].ask).toFixed(2);
-        }
-      },
-      async realizarCompra() {
-    const ahora = new Date();
-
-        if (
-          this.compraSeleccionada &&
-          this.cantidad > 0 &&
-          this.monto > 0 
-        ) {
-      const datos = {
-        user_id: this.getUserId,
-        action: "purchase",
-        crypto_code: this.compraSeleccionada.toLowerCase(),
-        crypto_amount: this.cantidad,
-        money: this.monto.toString(),
-        datetime: ahora,
-      };
-      try {
-        await this.$axios.post("transactions", datos);
-        console.log("Compra registrada correctamente");
-        this.mensajeUsuario = "Compra registrada correctamente.";
-        this.limpiarFormulario();
-      } catch (error) {
-        console.error("Error al registrar compra:", error);
-        this.mensajeUsuario = "Error al registrar la compra.";
+      compraSeleccionada: "",
+      cantidad: 0,
+      monto: 0,
+      mensajeUsuario: "",
+    };
+  },
+  computed: {
+    ...mapGetters(["getUserId"]),
+  },
+  watch: {
+    cantidad(newCantidad) {
+      if (this.compraSeleccionada && this.cryptos[this.compraSeleccionada]) {
+        this.monto = (newCantidad * this.cryptos[this.compraSeleccionada].ask).toFixed(2);
       }
-    } else {
-      this.mensajeUsuario = "Por favor, complete todos los campos correctamente o ingrese una fecha y hora válida.";
-    }
-      },
-      limpiarFormulario() {
-        this.compraSeleccionada = "";
-        this.cantidad = 0;
-        this.monto = 0;
-        this.fechaHora = "";
-        setTimeout(() => {
-          this.mensajeUsuario = ""; 
-        }, 3000); // 3segs despues se borra el mensaje
-      },
-        },
-  };
+    },
+    compraSeleccionada() {
+      this.actualizarMonto();
+    },
+  },
+  methods: {
+    async actualizarMonto() {
+      if (this.compraSeleccionada) {
+        const crypto = this.compraSeleccionada;
+        const response = await this.$axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
+        this.cryptos[crypto].ask = response.data.totalAsk;
+        this.monto = (this.cantidad * this.cryptos[crypto].ask).toFixed(2);
+      }
+    },
+    async realizarCompra() {
+      const ahora = new Date();
+
+      if (
+        this.compraSeleccionada &&
+        this.cantidad > 0 &&
+        this.monto > 0 
+      ) {
+        const datos = {
+          user_id: this.getUserId,
+          action: "purchase",
+          crypto_code: this.compraSeleccionada.toLowerCase(),
+          crypto_amount: this.cantidad,
+          money: this.monto.toString(),
+          datetime: ahora,
+        };
+        try {
+          await this.$axios.post("transactions", datos);
+          await this.$store.dispatch('comprarCripto', {
+            cryptoCode: this.compraSeleccionada.toLowerCase(),
+            cantidad: this.cantidad,
+          });
+          console.log("Compra registrada correctamente");
+          this.mensajeUsuario = "Compra registrada correctamente.";
+          this.limpiarFormulario();
+        } catch (error) {
+          console.error("Error al registrar compra:", error);
+          this.mensajeUsuario = "Error al registrar la compra.";
+        }
+      } else {
+        this.mensajeUsuario = "Por favor, complete todos los campos correctamente o ingrese una fecha y hora válida.";
+      }
+    },
+    limpiarFormulario() {
+      this.compraSeleccionada = "";
+      this.cantidad = 0;
+      this.monto = 0;
+      setTimeout(() => {
+        this.mensajeUsuario = ""; 
+      }, 3000); // 3segundos después se borra el mensaje
+    },
+  },
+};
 </script>
 
 <style scoped>

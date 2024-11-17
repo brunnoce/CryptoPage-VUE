@@ -20,6 +20,7 @@
             min="0.00001"
             step="0.00001"
             placeholder="0.00"
+            :max="maxCantidad"
           />
         </div>
         <div class="form-group">
@@ -42,86 +43,105 @@
   
 <script>
   import { mapGetters } from "vuex";
-  
+
   export default {
     data() {
       return {
         cryptos: {
-        btc: { name: 'Bitcoin', ask: 0, bid: 0, time: '' },
-        eth: { name: 'Ethereum', ask: 0, bid: 0, time: '' },
-        dai: { name: 'DAI', ask: 0, bid: 0, time: '' },
-        usdt: { name: 'USDT', ask: 0, bid: 0, time: '' },
-        doge: { name: 'Dogecoin', ask: 0, bid: 0, time: ''},
-        ada: { name: 'Cardano', ask: 0, bid: 0, time: '' },
-        sol: { name: 'Solana', ask: 0, bid: 0, time: ''},
-        dot: { name: 'Polkadot', ask: 0, bid: 0, time: ''},
-        ltc: { name: 'Litecoin', ask: 0, bid: 0, time: ''},
-      },
+          btc: { name: 'Bitcoin', ask: 0, bid: 0, time: '', balance: 0 },
+          eth: { name: 'Ethereum', ask: 0, bid: 0, time: '', balance: 0 },
+          dai: { name: 'DAI', ask: 0, bid: 0, time: '', balance: 0 },
+          usdt: { name: 'USDT', ask: 0, bid: 0, time: '', balance: 0 },
+          doge: { name: 'Dogecoin', ask: 0, bid: 0, time: '', balance: 0 },
+          ada: { name: 'Cardano', ask: 0, bid: 0, time: '', balance: 0 },
+          sol: { name: 'Solana', ask: 0, bid: 0, time: '', balance: 0 },
+          dot: { name: 'Polkadot', ask: 0, bid: 0, time: '', balance: 0 },
+          ltc: { name: 'Litecoin', ask: 0, bid: 0, time: '', balance: 0 }
+        },
         ventaSeleccionada: "",
         cantidad: 0,
         monto: 0,
         mensajeUsuario: "",
+        maxCantidad: 0, 
       };
     },
     computed: {
-      ...mapGetters(["getUserId"]),
+      ...mapGetters(["getUserId", "getSaldo"]),
+      saldoDisponible() {
+        return this.getSaldo(this.ventaSeleccionada) || 0;
+      }
     },
     watch: {
       cantidad(newCantidad) {
         if (this.ventaSeleccionada && this.cryptos[this.ventaSeleccionada]) {
-          this.monto = (newCantidad * this.cryptos[this.ventaSeleccionada].bid).toFixed(2);
+          this.monto = (newCantidad * this.cryptos[this.ventaSeleccionada].bid);
         }
       },
       ventaSeleccionada() {
         this.actualizarMonto();
+        this.maxCantidad = this.saldoDisponible;
       },
     },
     methods: {
       async actualizarMonto() {
         if (this.ventaSeleccionada) {
           const crypto = this.ventaSeleccionada;
-          const response = await this.$axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
-          this.cryptos[crypto].bid = response.data.totalBid;
-          this.monto = (this.cantidad * this.cryptos[crypto].bid).toFixed(2);
+          try {
+            const response = await this.$axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
+            console.log("Respuesta de la API para " + crypto + ": ", response.data);
+            this.cryptos[crypto].bid = response.data.totalBid;
+            this.monto = (this.cantidad * this.cryptos[crypto].bid);
+            
+            const balanceResponse = await this.$axios.get(`/api/getBalance/${this.getUserId}/${crypto}`);
+            this.cryptos[crypto].balance = balanceResponse.data.balance;
+            this.maxCantidad = this.cryptos[crypto].balance; 
+          } catch (error) {
+            console.error("Error al obtener los datos de la criptomoneda:", error);
+          }
         }
       },
-      async realizarVenta() {
-    const ahora = new Date();
+      async realizarVenta() { 
+        if (this.cantidad <= 0 || this.monto <= 0 || !this.ventaSeleccionada) {
+          this.mensajeUsuario = "Por favor, complete todos los campos correctamente.";
+          return;
+        }
 
-    if (
-      this.ventaSeleccionada &&
-      this.cantidad > 0 &&
-      this.monto > 0 
-    ) {
-      const datos = {
-        user_id: this.getUserId,
-        action: "sale",
-        crypto_code: this.ventaSeleccionada.toLowerCase(),
-        crypto_amount: this.cantidad,
-        money: this.monto.toFixed(2),
-        datetime: ahora,
-      };
-      try {
-        await this.$axios.post("transactions", datos);
-        this.mensajeUsuario = "Venta registrada correctamente.";
-        this.limpiarFormulario();
-      } catch (error) {
-        console.error("Error al registrar venta:", error);
-        this.mensajeUsuario = "Error al registrar la venta.";
-      }
-    } else {
-      this.mensajeUsuario = "Por favor, complete todos los campos correctamente.";
-    }
-  },
-    limpiarFormulario() {
+        if (this.cantidad > this.saldoDisponible) {
+          this.mensajeUsuario = "No tienes suficiente saldo para esta venta.";
+          return;
+        }
+
+        const datos = {
+          user_id: this.getUserId,
+          action: "sale",
+          crypto_code: this.ventaSeleccionada.toLowerCase(),
+          crypto_amount: this.cantidad,
+          money: this.monto,
+          datetime: new Date(),
+        };
+
+        try {
+          await this.$axios.post("transactions", datos);
+          await this.$store.dispatch("venderCripto", {
+            cryptoCode: this.ventaSeleccionada.toLowerCase(),
+            cantidad: this.cantidad,
+          });
+          this.mensajeUsuario = "Venta registrada correctamente.";
+          this.limpiarFormulario();
+        } catch (error) {
+          this.mensajeUsuario = "Error al registrar la venta.";
+          console.error(error);
+        }
+      },
+      limpiarFormulario() {
         this.ventaSeleccionada = "";
         this.cantidad = 0;
         this.monto = 0;
-        this.fechaHora = "";
+        this.maxCantidad = 0;
         setTimeout(() => {
-        this.mensajeUsuario = "";
-        }, 3000);
-    },
+          this.mensajeUsuario = "";
+        }, 3000); // 3segundos después se borra el mensaje
+      },
     },
   };
 </script>

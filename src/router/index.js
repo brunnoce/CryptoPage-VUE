@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import LoginView from '../views/LoginView.vue';
-import ComprarView from '../views/ComprarView.vue';  
-import VenderView from '../views/VenderView.vue';  
-import HistorialView from '../views/HistorialView.vue'; 
+import HomeView from '@/views/HomeView.vue';
+import LoginView from '@/views/LoginView.vue';
+import ComprarView from '@/views/ComprarView.vue';  
+import VenderView from '@/views/VenderView.vue';  
+import HistorialView from '@/views/HistorialView.vue'; 
+import DetailsView from '@/views/DetailsView.vue';
 
 const routes = [
   {
@@ -31,6 +32,11 @@ const routes = [
     name: 'historial',
     component: HistorialView,
   },
+  {
+    path: '/details/:id',
+    name: 'DetailsView',
+    component: DetailsView,
+  }
 ];
 
 const router = createRouter({
