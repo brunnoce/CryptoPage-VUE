@@ -101,6 +101,7 @@ export default {
   
   tr:hover {
     background-color: #5CF2F2;
+    color: black;
   }
   
 </style>  

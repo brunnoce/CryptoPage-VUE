@@ -88,6 +88,10 @@ export default {
     border: 1px solid #ddd;
     text-align: center;
   }
+  tr:hover {
+    background-color: #5CF2F2;
+    color: black;
+  }
 
   button {
     background-color: #034aa6;

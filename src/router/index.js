@@ -5,6 +5,7 @@ import ComprarView from '@/views/ComprarView.vue';
 import VenderView from '@/views/VenderView.vue';  
 import HistorialView from '@/views/HistorialView.vue'; 
 import DetailsView from '@/views/DetailsView.vue';
+import AnalisisView from '@/views/AnalisisView.vue';
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: '/details/:id',
     name: 'DetailsView',
     component: DetailsView,
+  },
+  {
+    path: '/analisis',
+    name: 'analisis',
+    component: AnalisisView,
   }
 ];
 

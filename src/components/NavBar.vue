@@ -9,6 +9,7 @@
       <li><router-link to="/comprar">Comprar</router-link></li>
       <li><router-link to="/vender">Vender</router-link></li>
       <li><router-link to="/historial">Historial</router-link></li>
+      <li><router-link to="/analisis">Analisis</router-link></li>
       <li v-if="isUserLoggedIn">
         <button @click="logout">Cerrar sesión</button>
       </li>
