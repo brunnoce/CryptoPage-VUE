@@ -33,14 +33,14 @@ export default createStore({
     },
     actualizarSaldo(state, { cryptoCode, cantidad }) {
       if (!state.saldo[cryptoCode]) {
-        state.saldo[cryptoCode] = 0; 
+        state.saldo[cryptoCode] = 0;
       }
       state.saldo[cryptoCode] += parseFloat(cantidad);
       localStorage.setItem('saldo', JSON.stringify(state.saldo));
     },
     restarSaldo(state, { cryptoCode, cantidad }) {
       if (!state.saldo[cryptoCode]) {
-        state.saldo[cryptoCode] = 0; 
+        state.saldo[cryptoCode] = 0;
       }
       state.saldo[cryptoCode] -= parseFloat(cantidad);
       if (state.saldo[cryptoCode] < 0) state.saldo[cryptoCode] = 0;
@@ -59,6 +59,22 @@ export default createStore({
     },
     venderCripto({ commit }, { cryptoCode, cantidad }) {
       commit('restarSaldo', { cryptoCode, cantidad });
+    },
+    saldoEliminacion({ commit }, { cryptoCode, cantidad, tipoTransaccion }) {
+      if (tipoTransaccion === 'purchase') {
+        commit('restarSaldo', { cryptoCode, cantidad });
+      } else if (tipoTransaccion === 'sale') {
+        commit('actualizarSaldo', { cryptoCode, cantidad });
+      }
+    },
+    saldoEdicion({ commit }, { cryptoCode, cantidadAnterior, cantidadNueva, tipoTransaccion }) {
+      if (tipoTransaccion === 'purchase') {
+        commit('restarSaldo', { cryptoCode, cantidad: cantidadAnterior });
+        commit('actualizarSaldo', { cryptoCode, cantidad: cantidadNueva });
+      } else if (tipoTransaccion === 'sale') {
+        commit('actualizarSaldo', { cryptoCode, cantidad: cantidadAnterior });
+        commit('restarSaldo', { cryptoCode, cantidad: cantidadNueva });
+      }
     },
   },
 });
