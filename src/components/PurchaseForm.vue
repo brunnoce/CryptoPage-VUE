@@ -185,30 +185,4 @@ export default {
   button:hover {
     background-color: #0274a6;
   }
-
-  .container-mensajeUsuario {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-  }
-
-  .mensajeUsuario {
-    color: #5CF2F2;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-    background-color: rgba(3, 74, 166, 0.1);
-    border: 1px solid #034aa6;
-    border-radius: 4px;
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .readonly-input {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    color: #666;
-    cursor: not-allowed;
-  }
 </style>

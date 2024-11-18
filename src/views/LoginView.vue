@@ -4,12 +4,16 @@
       <form class="login-form" @submit.prevent="inicioSesion">
         <h1>Iniciar sesión</h1>
         <label for="username">Nombre de usuario</label>
-        <input v-model="username" type="text" id="username" placeholder="Ingresa tu nombre de usuario" required />
+        <input v-model="username" type="text" id="username" placeholder="Ingresa tu nombre de usuario" />
 
         <label for="password">Contraseña</label>
-        <input v-model="password" type="password" id="password" placeholder="Ingresa tu contraseña" required />
+        <input v-model="password" type="password" id="password" placeholder="Ingresa tu contraseña" />
 
         <button type="submit">Iniciar sesión</button>
+
+        <div class="container-mensajeUsuario" v-if="mensajeUsuario">
+          <p class="mensajeUsuario">{{ mensajeUsuario }}</p>
+        </div>
       </form>
     </div>
   </div>
@@ -23,19 +27,49 @@ export default {
   data() {
     return {
       username: "",
+      mensajeUsuario: "",
     };
   },
   methods: {
-    ...mapActions(['loginUser']),
-    
+    ...mapActions(['loginUser']), 
     inicioSesion() {
-      if (this.username.trim()) {
-        localStorage.setItem('userId', this.username);
-        this.loginUser(this.username);
-        this.$router.push({ name: 'home' });
-      } else {
-        alert('Por favor, ingresa un ID válido.');
+      if (!this.username.trim()) {
+        this.mensajeUsuario = "Por favor, ingresa un username";
+        return;
       }
+
+      if (!this.validarUser(this.username)) {
+        this.mensajeUsuario = "El username debe ser alfanumérico, contener al menos una letra y un número, y tener entre 4 y 15 caracteres.";
+        return;
+      }
+
+      localStorage.setItem('userId', this.username);
+      this.loginUser(this.username);
+      this.$router.push({ name: 'home' });
+    },
+    validarUser(str) {
+      let tieneLetra = false;
+      let tieneNumero = false;
+
+      if (str.length < 4 || str.length > 15) {
+        return false;
+      }
+
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if ((char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')) {
+          tieneLetra = true;
+        } else if (char >= '0' && char <= '9') {
+          tieneNumero = true;
+        } else {
+          return false;
+        }
+        if (tieneLetra && tieneNumero) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }
 };

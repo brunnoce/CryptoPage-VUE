@@ -4,14 +4,13 @@
 
     <div v-if="transaccion" class="actions-form">
       <label for="id">ID de Transacción:</label>
-      <input type="text" :value="transaccion._id" readonly/>
+      <input type="text" :value="transaccion._id" class="readonly-input"/>
 
       <label for="cryptoAmount">Monto de Crypto Comprado:</label>
       <input type="number" v-model="formData.cryptoAmount" class="input-field"/>
 
       <label for="money">Monto Gastado (ARS):</label>
       <input type="number" v-model="formData.money" class="input-field"/>
-
       <label for="type">Tipo de Transacción:</label>
       <input type="text" :value="transaccion.type" readonly class="input-field"/>
 
