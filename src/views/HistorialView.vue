@@ -50,12 +50,11 @@ export default {
       const response = await apiClient.get(
         `transactions?q={"user_id": "${this.$store.getters.getUserId}"}`
       );
-      console.log('Transacciones cargadas:', response.data); // Para debugging
       const movimientos = response.data;
       this.compras = movimientos.filter(m => m.action === 'purchase');
       this.ventas = movimientos.filter(m => m.action === 'sale');
     } catch (error) {
-      console.error("Error fetching transactions:", error);
+      console.error("Error buscando transacciones:", error);
     }
   },
 };

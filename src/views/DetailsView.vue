@@ -12,7 +12,7 @@
       <label for="money">Monto Gastado (ARS):</label>
       <input type="number" v-model="formData.money" class="input-field"/>
       <label for="type">Tipo de Transacción:</label>
-      <input type="text" :value="transaccion.type" readonly class="input-field"/>
+      <input type="text" class="input-field" :value="transaccion.action === 'purchase' ? 'Compra' : 'Venta'" readonly />
 
       <label for="date">Fecha de la Transacción:</label>
       <input type="text" :value="formattedDate" readonly class="input-field"/>
@@ -20,6 +20,7 @@
       <div class="buttons">
         <button @click="guardarCambios" class="btn-save">Guardar</button>
         <button @click="eliminarTransaccion" class="btn-delete">Eliminar</button>
+        <button @click="volver">Volver</button>
       </div>
     </div>
 
@@ -69,36 +70,56 @@ export default {
     },
     async guardarCambios() {
       const id = this.transaccion._id;
+      const cantidadAnterior = this.transaccion.crypto_amount; 
+      const cantidadNueva = this.formData.cryptoAmount; 
+
       try {
         await apiClient.patch(`transactions/${id}`, {
           money: this.formData.money,
-          crypto_amount: this.formData.cryptoAmount,
+          crypto_amount: cantidadNueva,
         });
+
+        this.$store.dispatch('saldoEdicion', {
+          cryptoCode: this.transaccion.crypto_code,
+          cantidadAnterior,
+          cantidadNueva,
+          tipoTransaccion: this.transaccion.action,
+        });
+
         this.mensajeUsuario = 'La transacción se actualizó correctamente';
-        await this.cargarTransaccion();
-        this.$router.push('/historial'); 
+        this.$router.push('/historial');
       } catch (error) {
-        console.log('Error al actualizar la transacción:', error);
+        console.error('Error al actualizar la transacción:', error);
         this.mensajeUsuario = 'Error al actualizar la transacción. Por favor, intente nuevamente.';
       }
     },
     async eliminarTransaccion() {
-      if (!confirm('¿Está seguro de que desea eliminar esta transacción?')) { //mostrar alert para confirmar eliminado
+      if (!confirm('¿Está seguro de que desea eliminar esta transacción?')) {
         return;
       }
 
       const id = this.transaccion._id;
       try {
         await apiClient.delete(`transactions/${id}`);
+
+        this.$store.dispatch('saldoEliminacion', {
+          cryptoCode: this.transaccion.crypto_code,
+          cantidad: this.transaccion.crypto_amount,
+          tipoTransaccion: this.transaccion.action,
+        });
+
         this.mensajeUsuario = 'La transacción fue eliminada correctamente';
         setTimeout(() => {
-          this.$router.push('/historial'); 
-        }, 1500); 
+          this.$router.push('/historial');
+        }, 1500);
       } catch (error) {
         console.error('Error al eliminar la transacción:', error);
         this.mensajeUsuario = 'Error al eliminar la transacción.';
       }
     },
+    async volver() {
+      this.$router.push('/historial');
+    }
   },
 };
 </script>
@@ -158,6 +179,19 @@ export default {
 
 .btn-delete:hover {
   background-color: darkred;
+}
+
+.btn-volver {
+  background-color: #034AA6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-volver:hover {
+  background-color: #5e9ce0;
 }
 
 .container-mensajeUsuario {
