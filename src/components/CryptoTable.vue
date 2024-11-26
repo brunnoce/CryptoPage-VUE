@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import cryptoConfig from "@/cryptoConfig";
 
 export default {
   data() {
@@ -49,7 +49,7 @@ export default {
       try {
         this.cargando = true;
         for (let crypto in this.cryptos) {
-          const response = await axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
+          const response = await cryptoConfig.get(`satoshitango/${crypto}/ars`);
           this.cryptos[crypto].ask = response.data.totalAsk;
           this.cryptos[crypto].bid = response.data.totalBid;
           this.cryptos[crypto].time = response.data.time;  

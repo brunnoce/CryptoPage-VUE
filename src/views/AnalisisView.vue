@@ -94,7 +94,7 @@
       async obtenerPrecioCrypto(cryptoCode, cantidad, cryptoPrices) {
         try {
           const response = await cryptoConfig.get(`satoshitango/${cryptoCode}/ars`);
-          const precio = parseFloat(response.data.totalAsk); // Ajuste de la clave
+          const precio = parseFloat(response.data.totalAsk); 
           if (!isNaN(precio) && precio > 0) {
             cryptoPrices[cryptoCode] = precio;
           } else {

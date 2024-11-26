@@ -43,6 +43,8 @@
   
 <script>
   import { mapGetters } from "vuex";
+  import apiClient from "@/axiosConfig";
+  import cryptoConfig from "@/cryptoConfig";
 
   export default {
     data() {
@@ -63,13 +65,17 @@
         monto: 0,
         mensajeUsuario: "",
         maxCantidad: 0, 
+        saldoDisponible: 0, 
       };
+    },
+    mounted() {
+      const cryptoList = ['btc', 'eth', 'dai', 'usdt', 'doge', 'ada', 'sol', 'dot', 'ltc'];
+      cryptoList.forEach(crypto => {
+        console.log(`Saldo para ${crypto}:`, this.$store.getters.getSaldo(crypto));
+      });
     },
     computed: {
       ...mapGetters(["getUserId", "getSaldo"]),
-      saldoDisponible() {
-        return this.getSaldo(this.ventaSeleccionada) || 0;
-      }
     },
     watch: {
       cantidad(newCantidad) {
@@ -79,22 +85,22 @@
       },
       ventaSeleccionada() {
         this.actualizarMonto();
+        this.saldoDisponible = this.$store.getters.getSaldo(this.ventaSeleccionada);
         this.maxCantidad = this.saldoDisponible;
-      },
+      },   
     },
     methods: {
       async actualizarMonto() {
         if (this.ventaSeleccionada) {
           const crypto = this.ventaSeleccionada;
           try {
-            const response = await this.$axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
+            const response = await cryptoConfig.get(`satoshitango/${crypto}/ars`);
             console.log("Respuesta de la API para " + crypto + ": ", response.data);
             this.cryptos[crypto].bid = response.data.totalBid;
-            this.monto = (this.cantidad * this.cryptos[crypto].bid);
+            this.monto = (this.cantidad * this.cryptos[crypto].bid).toFixed(2);
             
-            const balanceResponse = await this.$axios.get(`/api/getBalance/${this.getUserId}/${crypto}`);
-            this.cryptos[crypto].balance = balanceResponse.data.balance;
-            this.maxCantidad = this.cryptos[crypto].balance; 
+            this.saldoDisponible = this.$store.getters.getSaldo(this.ventaSeleccionada);
+            this.maxCantidad = this.saldoDisponible;
           } catch (error) {
             console.error("Error al obtener los datos de la criptomoneda:", error);
           }
@@ -117,11 +123,13 @@
           crypto_code: this.ventaSeleccionada.toLowerCase(),
           crypto_amount: this.cantidad,
           money: this.monto,
-          datetime: new Date(),
+          datetime: new Date().toISOString(),
         };
 
         try {
-          await this.$axios.post("transactions", datos);
+          console.log("Datos enviados:", datos);
+
+          await apiClient.post("transactions", datos);
           await this.$store.dispatch("venderCripto", {
             cryptoCode: this.ventaSeleccionada.toLowerCase(),
             cantidad: this.cantidad,

@@ -42,6 +42,7 @@ export default {
   computed: {
     ...mapState(['saldo']),
     saldoTotal() {
+      console.log(this.saldo);
       return this.saldo;
     },
   },

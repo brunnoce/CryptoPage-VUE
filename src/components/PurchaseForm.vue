@@ -42,6 +42,8 @@
 
 <script>
 import { mapGetters } from "vuex";
+import apiClient from "@/axiosConfig";
+import cryptoConfig from "@/cryptoConfig";
 
 export default {
   data() {
@@ -63,6 +65,12 @@ export default {
       mensajeUsuario: "",
     };
   },
+  mounted() {
+      const cryptoList = ['btc', 'eth', 'dai', 'usdt', 'doge', 'ada', 'sol', 'dot', 'ltc'];
+      cryptoList.forEach(crypto => {
+        console.log(`Saldo para ${crypto}:`, this.$store.getters.getSaldo(crypto));
+      });
+    },
   computed: {
     ...mapGetters(["getUserId"]),
   },
@@ -80,7 +88,7 @@ export default {
     async actualizarMonto() {
       if (this.compraSeleccionada) {
         const crypto = this.compraSeleccionada;
-        const response = await this.$axios.get(`https://criptoya.com/api/satoshitango/${crypto}/ars`);
+        const response = await cryptoConfig.get(`satoshitango/${crypto}/ars`);
         this.cryptos[crypto].ask = response.data.totalAsk;
         this.monto = (this.cantidad * this.cryptos[crypto].ask).toFixed(2);
       }
@@ -102,7 +110,7 @@ export default {
           datetime: ahora,
         };
         try {
-          await this.$axios.post("transactions", datos);
+          await apiClient.post("transactions", datos);
           await this.$store.dispatch('comprarCripto', {
             cryptoCode: this.compraSeleccionada.toLowerCase(),
             cantidad: this.cantidad,
