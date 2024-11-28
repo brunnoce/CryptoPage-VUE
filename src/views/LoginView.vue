@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       username: "",
+      password: "",
       mensajeUsuario: "",
     };
   },
@@ -43,9 +44,20 @@ export default {
         return;
       }
 
+      if (!this.password.trim()) {
+        this.mensajeUsuario = "Por favor, ingresa una contraseña";
+        return;
+      }
+
+      if (this.password.length < 8) {
+        this.mensajeUsuario = "La contraseña debe tener al menos 8 caracteres.";
+        return;
+      }
+
       localStorage.setItem('userId', this.username);
       this.loginUser(this.username);
       this.$router.push({ name: 'home' });
+      console.log("Username guardado: " + this.username)
     },
     validarUser(str) {
       let tieneLetra = false;
@@ -68,7 +80,6 @@ export default {
           return true;
         }
       }
-
       return false;
     }
   }
@@ -76,7 +87,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 .login-view {
   display: flex;
@@ -84,7 +94,6 @@ export default {
   align-items: center;
   height: 100vh;
   background-color: #020b1c; 
-  font-family: 'Roboto', sans-serif; 
 }
 
 .login-form-container {

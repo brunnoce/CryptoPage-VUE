@@ -66,8 +66,8 @@ export default {
     };
   },
   mounted() {
-      const cryptoList = ['btc', 'eth', 'dai', 'usdt', 'doge', 'ada', 'sol', 'dot', 'ltc'];
-      cryptoList.forEach(crypto => {
+      const cryptoLista = ['btc', 'eth', 'dai', 'usdt', 'doge', 'ada', 'sol', 'dot', 'ltc'];
+      cryptoLista.forEach(crypto => {
         console.log(`Saldo para ${crypto}:`, this.$store.getters.getSaldo(crypto));
       });
     },
@@ -86,11 +86,15 @@ export default {
   },
   methods: {
     async actualizarMonto() {
-      if (this.compraSeleccionada) {
+      try {
+        if (this.compraSeleccionada) {
         const crypto = this.compraSeleccionada;
         const response = await cryptoConfig.get(`satoshitango/${crypto}/ars`);
         this.cryptos[crypto].ask = response.data.totalAsk;
         this.monto = (this.cantidad * this.cryptos[crypto].ask).toFixed(2);
+        }       
+      } catch (error) {
+        console.error("Error al obtener los datos de la criptomoneda:", error);
       }
     },
     async realizarCompra() {
@@ -106,10 +110,11 @@ export default {
           action: "purchase",
           crypto_code: this.compraSeleccionada.toLowerCase(),
           crypto_amount: this.cantidad,
-          money: this.monto.toString(),
+          money: this.monto,
           datetime: ahora,
         };
         try {
+          console.log("Datos de compra posteados:", datos);
           await apiClient.post("transactions", datos);
           await this.$store.dispatch('comprarCripto', {
             cryptoCode: this.compraSeleccionada.toLowerCase(),
@@ -170,8 +175,7 @@ export default {
     font-weight: bold;
   }
 
-  select,
-  input {
+  select, input {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -180,17 +184,9 @@ export default {
   }
 
   button {
-    width: 100%;
-    padding: 12px;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-
-  button:hover {
-    background-color: #0274a6;
+      width: 100%;
+      padding: 12px;
+      cursor: pointer;
+      margin-top: 10px;
   }
 </style>

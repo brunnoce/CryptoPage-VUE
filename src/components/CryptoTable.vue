@@ -16,7 +16,6 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="cargando" class="loading">Cargando...</div>
   </div>
 </template>
 
@@ -44,10 +43,8 @@ export default {
     numeroConSeparadorDecimales(numero) {
       return new Intl.NumberFormat('es-AR').format(numero);
     },
-
     async obtenerPrecios() {
       try {
-        this.cargando = true;
         for (let crypto in this.cryptos) {
           const response = await cryptoConfig.get(`satoshitango/${crypto}/ars`);
           this.cryptos[crypto].ask = response.data.totalAsk;
@@ -56,9 +53,7 @@ export default {
         }
       } catch (error) {
         console.error('Error al obtener precios:', error);
-      } finally {
-        this.cargando = false;
-      }
+      } 
     },
   },
   created() {

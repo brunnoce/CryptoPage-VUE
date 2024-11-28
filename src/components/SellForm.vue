@@ -69,8 +69,8 @@
       };
     },
     mounted() {
-      const cryptoList = ['btc', 'eth', 'dai', 'usdt', 'doge', 'ada', 'sol', 'dot', 'ltc'];
-      cryptoList.forEach(crypto => {
+      const cryptoLista = ['btc', 'eth', 'dai', 'usdt', 'doge', 'ada', 'sol', 'dot', 'ltc'];
+      cryptoLista.forEach(crypto => {
         console.log(`Saldo para ${crypto}:`, this.$store.getters.getSaldo(crypto));
       });
     },
@@ -107,7 +107,11 @@
         }
       },
       async realizarVenta() { 
-        if (this.cantidad <= 0 || this.monto <= 0 || !this.ventaSeleccionada) {
+        const ahora = new Date();
+        if (
+          this.cantidad <= 0 || 
+          this.monto <= 0 || 
+          !this.ventaSeleccionada) {
           this.mensajeUsuario = "Por favor, complete todos los campos correctamente.";
           return;
         }
@@ -122,23 +126,24 @@
           action: "sale",
           crypto_code: this.ventaSeleccionada.toLowerCase(),
           crypto_amount: this.cantidad,
-          money: this.monto,
-          datetime: new Date().toISOString(),
+          money: this.monto.toFixed(2),
+          datetime: ahora,
         };
 
         try {
-          console.log("Datos enviados:", datos);
+          console.log("Datos de venta posteados:", datos);
 
           await apiClient.post("transactions", datos);
           await this.$store.dispatch("venderCripto", {
             cryptoCode: this.ventaSeleccionada.toLowerCase(),
             cantidad: this.cantidad,
           });
+          console.log("Venta registrada correctamente");
           this.mensajeUsuario = "Venta registrada correctamente.";
           this.limpiarFormulario();
         } catch (error) {
+          console.error("Error al registrar venta:", error);
           this.mensajeUsuario = "Error al registrar la venta.";
-          console.error(error);
         }
       },
       limpiarFormulario() {
@@ -186,8 +191,7 @@
       font-weight: bold;
   }
   
-  select,
-  input {
+  select, input {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
@@ -198,16 +202,8 @@
   button {
       width: 100%;
       padding: 12px;
-      color: white;
-      background-color: #034aa6;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
       cursor: pointer;
       margin-top: 10px;
   }
-  
-  button:hover {
-      background-color: #0274a6;
-  }
+
 </style>
